@@ -285,7 +285,7 @@ std::unique_ptr<cLogger::cListener> MakeConsoleListener(bool a_IsService)
 			return cpp14::make_unique<cVanillaCPPConsoleListener>();
 		}
 	#elif defined(ANDROID)
-		return new cAndroidConsoleListener();
+		return cpp14::make_unique<cAndroidConsoleListener>();
 	#else
 		return cpp14::make_unique<cVanillaCPPConsoleListener>();
 	#endif

@@ -9,6 +9,7 @@
 #include "Root.h"
 #include "WebAdmin.h"
 #include "MemorySettingsRepository.h"
+#include "Logger.h"
 
 #ifdef _WIN32 // For IntelliSense parsing
 typedef void jobject;

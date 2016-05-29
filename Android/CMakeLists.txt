@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.7)
-project(MCServer)
+project(Cuberite)
 include(ExternalProject)
 
 externalproject_add(lua_native
@@ -39,16 +39,20 @@ include_directories(
 	../lib/libevent/include/
 )
 
-# Probably not the recommended method, but other ways don't seem to generate libraries in libs/armeabi
-set(CMAKE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/../")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../ ${CMAKE_CURRENT_BINARY_DIR}/MCServer)
+# (Hopefully) temporary workaround for issue described in https://github.com/taka-no-me/android-cmake/issues/81
+if("${ANDROID_STL}" STREQUAL c++_static)
+	set(CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY} -latomic")
+endif()
 
-get_directory_property(BINDING_OUTPUTS DIRECTORY ${CMAKE_SOURCE_DIR}/src/Bindings DEFINITION BINDING_OUTPUTS)
+# Probably not the recommended method, but other ways don't seem to generate libraries in libs/armeabi
+add_subdirectory(../ Cuberite)
+
+get_directory_property(BINDING_OUTPUTS DIRECTORY ../src/Bindings DEFINITION BINDING_OUTPUTS)
 ADD_CUSTOM_COMMAND(
 		OUTPUT ${BINDING_OUTPUTS}
 
 		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tolua_native-prefix/src/tolua_native-build/Release/tolua -L BindingsProcessor.lua -o  Bindings.cpp -H  Bindings.h AllToLua.pkg
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/Bindings
+		WORKING_DIRECTORY ../src/Bindings
 )
 add_custom_target(BindingDependencies ALL DEPENDS ${BINDING_OUTPUTS})
 add_dependencies(AndroidNative BindingDependencies)
